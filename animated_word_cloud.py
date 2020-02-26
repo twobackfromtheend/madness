@@ -78,7 +78,7 @@ async def message_callback(message: Message):
     author_colour = message.author.colour if message.author.colour else None
 
     for control in CONTROLS:
-        if message_content.startswith(control) or True:
+        if message_content.startswith(control):
             queue.put(QueueMessage(control, author, author_colour))
             logger.info(f"Control by {author}: {control}")
             break
