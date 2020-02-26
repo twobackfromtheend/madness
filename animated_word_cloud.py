@@ -30,7 +30,7 @@ class QueueMessage(NamedTuple):
 
 
 async def show_plot(queue: Queue):
-    fig = plt.figure(figsize=FIG_SIZE)
+    fig = plt.figure('TwitchWordCloud', figsize=FIG_SIZE)
 
     ax = fig.add_subplot(111, frameon=False)
 
