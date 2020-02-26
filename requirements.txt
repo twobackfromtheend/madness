@@ -1,3 +1,4 @@
 twitchio
 pyautogui
+matplotlib
 pyqt5
