@@ -22,6 +22,13 @@ MAX_SCALE = 6
 FIG_SIZE = (8, 4.5)
 SLEEP = 0.032
 
+window_closed = False
+
+
+def handle_close(event):
+    global window_closed
+    window_closed = True
+
 
 class QueueMessage(NamedTuple):
     control: str
@@ -31,7 +38,7 @@ class QueueMessage(NamedTuple):
 
 async def show_plot(queue: Queue):
     fig = plt.figure('TwitchWordCloud', figsize=FIG_SIZE)
-
+    fig.canvas.mpl_connect('close_event', handle_close)
     ax = fig.add_subplot(111, frameon=False)
 
     ax.axes.get_xaxis().set_visible(False)
@@ -65,7 +72,7 @@ async def show_plot(queue: Queue):
     plt.show(block=False)
 
     annotations: DefaultDict[str, List[GeneratedAnnotation]] = defaultdict(list)  # Word: [annotations]
-    while True:
+    while not window_closed:
         await asyncio.sleep(SLEEP)
         update(annotations)
         fig.canvas.draw_idle()
@@ -84,6 +91,12 @@ async def message_callback(message: Message):
             break
 
 
+async def main():
+    while not window_closed:
+        await asyncio.sleep(1)
+    bot_task.cancel()
+
+
 if __name__ == '__main__':
     from chatbot import Bot
 
@@ -92,6 +105,6 @@ if __name__ == '__main__':
     bot = Bot(message_callback)
 
     loop = asyncio.get_event_loop()
-    loop.create_task(bot.start())
-    loop.create_task(show_plot(queue))
-    loop.run_forever()
+    bot_task = loop.create_task(bot.start())
+    plot_task = loop.create_task(show_plot(queue))
+    loop.run_until_complete(main())
