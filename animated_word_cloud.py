@@ -19,6 +19,8 @@ matplotlib.use("Qt5Agg")
 
 ALPHA_DECAY = 0.92
 MAX_SCALE = 6
+FIG_SIZE = (8, 4.5)
+SLEEP = 0.032
 
 
 class QueueMessage(NamedTuple):
@@ -28,7 +30,7 @@ class QueueMessage(NamedTuple):
 
 
 async def show_plot(queue: Queue):
-    fig = plt.figure(figsize=(8, 4.5))
+    fig = plt.figure(figsize=FIG_SIZE)
 
     ax = fig.add_subplot(111, frameon=False)
 
@@ -64,7 +66,7 @@ async def show_plot(queue: Queue):
 
     annotations: DefaultDict[str, List[GeneratedAnnotation]] = defaultdict(list)  # Word: [annotations]
     while True:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(SLEEP)
         update(annotations)
         fig.canvas.draw_idle()
         plt.pause(0.001)
